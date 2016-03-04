@@ -17,9 +17,9 @@
 
 package com.alipay.euler.andfix;
 
-import java.lang.reflect.Method;
-
 import android.annotation.SuppressLint;
+
+import java.lang.reflect.Method;
 
 /**
  * Compatibility
@@ -37,8 +37,9 @@ public class Compat {
 	 * @return true if the device support AndFix
 	 */
 	public static synchronized boolean isSupport() {
-		if (isChecked)
-			return isSupport;
+		if (isChecked) {
+            return isSupport;
+        }
 
 		isChecked = true;
 		// not support alibaba's YunOs

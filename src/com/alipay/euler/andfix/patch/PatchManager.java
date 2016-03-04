@@ -17,6 +17,13 @@
 
 package com.alipay.euler.andfix.patch;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.alipay.euler.andfix.AndFixManager;
+import com.alipay.euler.andfix.util.FileUtil;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,13 +33,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.alipay.euler.andfix.AndFixManager;
-import com.alipay.euler.andfix.util.FileUtil;
 
 /**
  * patch manager
@@ -102,11 +102,11 @@ public class PatchManager {
 			cleanPatch();
 			sp.edit().putString(SP_VERSION, appVersion).commit();
 		} else {
-			initPatchs();
+			initPatches();
 		}
 	}
 
-	private void initPatchs() {
+	private void initPatches() {
 		File[] files = mPatchDir.listFiles();
 		for (File file : files) {
 			addPatch(file);

@@ -109,8 +109,8 @@ public class AndFix {
 		try {
 			final String vmVersion = System.getProperty("java.vm.version");
 			boolean isArt = vmVersion != null && vmVersion.startsWith("2");
-			int apilevel = Build.VERSION.SDK_INT;
-			return setup(isArt, apilevel);
+			int apiLevel = Build.VERSION.SDK_INT;
+			return setup(isArt, apiLevel);
 		} catch (Exception e) {
 			Log.e(TAG, "setup", e);
 			return false;

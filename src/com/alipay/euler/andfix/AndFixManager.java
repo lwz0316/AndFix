@@ -17,6 +17,12 @@
 
 package com.alipay.euler.andfix;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.alipay.euler.andfix.annotation.MethodReplace;
+import com.alipay.euler.andfix.security.SecurityChecker;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -24,12 +30,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import android.content.Context;
-import android.util.Log;
-
-import com.alipay.euler.andfix.annotation.MethodReplace;
-import com.alipay.euler.andfix.security.SecurityChecker;
 
 import dalvik.system.DexFile;
 
@@ -125,30 +125,31 @@ public class AndFixManager {
 		}
 
 		if (!mSecurityChecker.verifyApk(file)) {// security check fail
+            Log.d(TAG, "patch file security check fail");
 			return;
 		}
 
 		try {
-			File optfile = new File(mOptDir, file.getName());
+			File optFile = new File(mOptDir, file.getName());
 			boolean saveFingerprint = true;
-			if (optfile.exists()) {
+			if (optFile.exists()) {
 				// need to verify fingerprint when the optimize file exist,
 				// prevent someone attack on jailbreak device with
 				// Vulnerability-Parasyte.
 				// btw:exaggerated android Vulnerability-Parasyte
 				// http://secauo.com/Exaggerated-Android-Vulnerability-Parasyte.html
-				if (mSecurityChecker.verifyOpt(optfile)) {
+				if (mSecurityChecker.verifyOpt(optFile)) {
 					saveFingerprint = false;
-				} else if (!optfile.delete()) {
+				} else if (!optFile.delete()) {
 					return;
 				}
 			}
 
 			final DexFile dexFile = DexFile.loadDex(file.getAbsolutePath(),
-					optfile.getAbsolutePath(), Context.MODE_PRIVATE);
+					optFile.getAbsolutePath(), Context.MODE_PRIVATE);
 
 			if (saveFingerprint) {
-				mSecurityChecker.saveOptSig(optfile);
+				mSecurityChecker.saveOptSig(optFile);
 			}
 
 			ClassLoader patchClassLoader = new ClassLoader(classLoader) {

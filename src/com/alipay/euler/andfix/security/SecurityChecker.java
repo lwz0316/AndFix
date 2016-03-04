@@ -17,6 +17,15 @@
 
 package com.alipay.euler.andfix.security;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.text.TextUtils;
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,15 +42,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.security.auth.x500.X500Principal;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * security check
@@ -61,7 +61,7 @@ public class SecurityChecker {
 
 	private final Context mContext;
 	/**
-	 * host publickey
+	 * host public key
 	 */
 	private PublicKey mPublicKey;
 	/**
@@ -75,7 +75,7 @@ public class SecurityChecker {
 	}
 
 	/**
-	 * @param path
+	 * @param file
 	 *            Dex file
 	 * @return true if verify fingerprint success
 	 */
@@ -89,7 +89,7 @@ public class SecurityChecker {
 	}
 
 	/**
-	 * @param path
+	 * @param file
 	 *            Dex file
 	 */
 	public void saveOptSig(File file) {
@@ -98,11 +98,11 @@ public class SecurityChecker {
 	}
 
 	/**
-	 * @param path
+	 * @param file
 	 *            Apk file
 	 * @return true if verify apk success
 	 */
-	public boolean verifyApk(File path) {
+	public boolean verifyApk(File file) {
 		if (mDebuggable) {
 			Log.d(TAG, "mDebuggable = true");
 			return true;
@@ -110,7 +110,7 @@ public class SecurityChecker {
 
 		JarFile jarFile = null;
 		try {
-			jarFile = new JarFile(path);
+			jarFile = new JarFile(file);
 
 			JarEntry jarEntry = jarFile.getJarEntry(CLASSES_DEX);
 			if (null == jarEntry) {// no code
@@ -121,9 +121,9 @@ public class SecurityChecker {
 			if (certs == null) {
 				return false;
 			}
-			return check(path, certs);
+			return check(file, certs);
 		} catch (IOException e) {
-			Log.e(TAG, path.getAbsolutePath(), e);
+			Log.e(TAG, file.getAbsolutePath(), e);
 			return false;
 		} finally {
 			try {
@@ -131,11 +131,12 @@ public class SecurityChecker {
 					jarFile.close();
 				}
 			} catch (IOException e) {
-				Log.e(TAG, path.getAbsolutePath(), e);
+				Log.e(TAG, file.getAbsolutePath(), e);
 			}
 		}
 	}
 
+	// TODO is need this step ?
 	private void loadDigestes(JarFile jarFile, JarEntry je) throws IOException {
 		InputStream is = null;
 		try {
@@ -151,14 +152,14 @@ public class SecurityChecker {
 	}
 
 	// verify the signature of the Apk
-	private boolean check(File path, Certificate[] certs) {
+	private boolean check(File file, Certificate[] certs) {
 		if (certs.length > 0) {
 			for (int i = certs.length - 1; i >= 0; i--) {
 				try {
 					certs[i].verify(mPublicKey);
 					return true;
 				} catch (Exception e) {
-					Log.e(TAG, path.getAbsolutePath(), e);
+					Log.e(TAG, file.getAbsolutePath(), e);
 				}
 			}
 		}

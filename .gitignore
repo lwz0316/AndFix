@@ -37,3 +37,5 @@ project.properties
 /assets
 /res
 /dist
+.idea/
+*.iml
