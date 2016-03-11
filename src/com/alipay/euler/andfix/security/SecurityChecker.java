@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.PublicKey;
@@ -116,7 +115,6 @@ public class SecurityChecker {
 			if (null == jarEntry) {// no code
 				return false;
 			}
-			loadDigestes(jarFile, jarEntry);
 			Certificate[] certs = jarEntry.getCertificates();
 			if (certs == null) {
 				return false;
@@ -132,21 +130,6 @@ public class SecurityChecker {
 				}
 			} catch (IOException e) {
 				Log.e(TAG, file.getAbsolutePath(), e);
-			}
-		}
-	}
-
-	// TODO is need this step ?
-	private void loadDigestes(JarFile jarFile, JarEntry je) throws IOException {
-		InputStream is = null;
-		try {
-			is = jarFile.getInputStream(je);
-			byte[] bytes = new byte[8192];
-			while (is.read(bytes) > 0) {
-			}
-		} finally {
-			if (is != null) {
-				is.close();
 			}
 		}
 	}
