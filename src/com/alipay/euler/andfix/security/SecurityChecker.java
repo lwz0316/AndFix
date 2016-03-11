@@ -26,12 +26,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.alipay.euler.andfix.util.FileUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -96,6 +95,15 @@ public class SecurityChecker {
 		saveFingerprint(file.getName(), fingerprint);
 	}
 
+    private String getFileMD5(File file) {
+        try {
+            return FileUtil.getFileMD5(file);
+        } catch (Exception e) {
+            Log.e(TAG, "getFileMD5", e);
+        }
+        return null;
+    }
+
 	/**
 	 * @param file
 	 *            Apk file
@@ -147,35 +155,6 @@ public class SecurityChecker {
 			}
 		}
 		return false;
-	}
-
-	private String getFileMD5(File file) {
-		if (!file.isFile()) {
-			return null;
-		}
-		MessageDigest digest = null;
-		FileInputStream in = null;
-		byte buffer[] = new byte[8192];
-		int len;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-			in = new FileInputStream(file);
-			while ((len = in.read(buffer)) != -1) {
-				digest.update(buffer, 0, len);
-			}
-		} catch (Exception e) {
-			Log.e(TAG, "getFileMD5", e);
-			return null;
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} catch (IOException e) {
-				Log.e(TAG, "getFileMD5", e);
-			}
-		}
-		BigInteger bigInt = new BigInteger(digest.digest());
-		return bigInt.toString();
 	}
 
 	// md5 as fingerprint

@@ -21,7 +21,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * file utility
@@ -79,5 +82,34 @@ public class FileUtil {
 			}
 		}
 		return file.delete();
+	}
+
+    /**
+     * @param file
+     * @return the file MD5-digest
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
+	public static String getFileMD5(File file) throws IOException, NoSuchAlgorithmException {
+		if (!file.isFile()) {
+			return null;
+		}
+		MessageDigest digest = null;
+		FileInputStream in = null;
+		byte buffer[] = new byte[8192];
+		int len;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+			in = new FileInputStream(file);
+			while ((len = in.read(buffer)) != -1) {
+				digest.update(buffer, 0, len);
+			}
+		} finally {
+				if (in != null) {
+					in.close();
+				}
+		}
+		BigInteger bigInt = new BigInteger(digest.digest());
+		return bigInt.toString();
 	}
 }
