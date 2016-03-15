@@ -27,6 +27,7 @@ import com.alipay.euler.andfix.util.FileUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,11 +62,11 @@ public class PatchManager {
 	 */
 	private final File mPatchDir;
 	/**
-	 * patchs
+	 * patches
 	 */
-	private final SortedSet<Patch> mPatchs;
+	private final SortedSet<Patch> mPatches;
 	/**
-	 * classloaders
+	 * class loaders
 	 */
 	private final Map<String, ClassLoader> mLoaders;
 
@@ -77,7 +78,7 @@ public class PatchManager {
 		mContext = context;
 		mAndFixManager = new AndFixManager(mContext);
 		mPatchDir = new File(mContext.getFilesDir(), DIR);
-		mPatchs = new ConcurrentSkipListSet<Patch>();
+		mPatches = new ConcurrentSkipListSet<Patch>();
 		mLoaders = new ConcurrentHashMap<String, ClassLoader>();
 	}
 
@@ -124,13 +125,22 @@ public class PatchManager {
 		if (file.getName().endsWith(SUFFIX)) {
 			try {
 				patch = new Patch(file);
-				mPatchs.add(patch);
+				mPatches.add(patch);
 			} catch (IOException e) {
 				Log.e(TAG, "addPatch", e);
 			}
 		}
 		return patch;
 	}
+
+    /**
+     * get patch set. It is should call {@link #init(String)} method before.
+     *
+     * @return if there's no patch file return empty set.
+     */
+	public Set<Patch> getLocalPatches() {
+        return Collections.unmodifiableSortedSet(mPatches);
+    }
 
 	private void cleanPatch() {
 		File[] files = mPatchDir.listFiles();
@@ -179,7 +189,7 @@ public class PatchManager {
 	/**
 	 * load patch,call when plugin be loaded. used for plugin architecture.</br>
 	 * 
-	 * need name and classloader of the plugin
+	 * need name and class loader of the plugin
 	 * 
 	 * @param patchName
 	 *            patch name
@@ -190,7 +200,7 @@ public class PatchManager {
 		mLoaders.put(patchName, classLoader);
 		Set<String> patchNames;
 		List<String> classes;
-		for (Patch patch : mPatchs) {
+		for (Patch patch : mPatches) {
 			patchNames = patch.getPatchNames();
 			if (patchNames.contains(patchName)) {
 				classes = patch.getClasses(patchName);
@@ -207,7 +217,7 @@ public class PatchManager {
 		mLoaders.put("*", mContext.getClassLoader());// wildcard
 		Set<String> patchNames;
 		List<String> classes;
-		for (Patch patch : mPatchs) {
+		for (Patch patch : mPatches) {
 			patchNames = patch.getPatchNames();
 			for (String patchName : patchNames) {
 				classes = patch.getClasses(patchName);
