@@ -31,6 +31,7 @@ import com.alipay.euler.andfix.util.FileUtil;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -123,6 +124,7 @@ public class SecurityChecker {
 			if (null == jarEntry) {// no code
 				return false;
 			}
+            loadDigestes(jarFile, jarEntry);
 			Certificate[] certs = jarEntry.getCertificates();
 			if (certs == null) {
 				return false;
@@ -141,6 +143,20 @@ public class SecurityChecker {
 			}
 		}
 	}
+
+    private void loadDigestes(JarFile jarFile, JarEntry je) throws IOException {
+        InputStream is = null;
+        try {
+            is = jarFile.getInputStream(je);
+            byte[] bytes = new byte[8192];
+            while (is.read(bytes) > 0) {
+            }
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
 
 	// verify the signature of the Apk
 	private boolean check(File file, Certificate[] certs) {
