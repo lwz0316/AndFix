@@ -128,6 +128,9 @@ public class PatchManager {
 				mPatches.add(patch);
 			} catch (IOException e) {
 				Log.e(TAG, "addPatch", e);
+				if (file.exists()) {
+					file.delete();
+				}
 			}
 		}
 		return patch;

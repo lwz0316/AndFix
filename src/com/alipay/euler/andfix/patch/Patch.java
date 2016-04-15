@@ -18,6 +18,7 @@
 package com.alipay.euler.andfix.patch;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -98,6 +99,10 @@ public class Patch implements Comparable<Patch> {
 					}
 				}
 			}
+		} catch (Exception e) {
+			// 非法的jar 文件可能会导致失败
+			// 防止第三方恶意上传或 后台上传失误导致的问题
+			throw new FileNotFoundException("invalidate patch file");
 		} finally {
 			if (jarFile != null) {
 				jarFile.close();
