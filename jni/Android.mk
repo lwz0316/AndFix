@@ -8,7 +8,7 @@ LOCAL_SRC_FILES:= andfix.cpp\
 					art/art_method_replace_5_0.cpp \
 					art/art_method_replace_5_1.cpp \
 					art/art_method_replace_6_0.cpp \
-					dalvik/dalvik_method_replace.cpp \
+					dalvik/dalvik_method_replace.cpp
 
 LOCAL_CFLAGS	:= -std=gnu++11 -fpermissive -DDEBUG -O0
 

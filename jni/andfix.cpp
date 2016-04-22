@@ -54,11 +54,11 @@ static jboolean setup(JNIEnv* env, jclass clazz, jboolean isart,
 
 static void replaceMethod(JNIEnv* env, jclass clazz, jobject src,
 		jobject dest) {
-	if (isArt) {
-		art_replaceMethod(env, src, dest);
-	} else {
-		dalvik_replaceMethod(env, src, dest);
-	}
+    if (isArt) {
+        art_replaceMethod(env, src, dest);
+    } else {
+        dalvik_replaceMethod(env, src, dest);
+    }
 }
 
 static void setFieldFlag(JNIEnv* env, jclass clazz, jobject field) {
