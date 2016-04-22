@@ -167,6 +167,22 @@ The following is important but out of AndFix's range.
 -  verify the signature of patch file
 -  verify the fingerprint of optimize file
 
+### Build Config
+
+Only use `x86` and `armeabi` platform for aviod some device crash. You can add the script to `build.gradle`.
+
+		android {
+			...
+			splits {
+				abi {
+				enable true
+				reset()
+					include 'x86', 'armeabi'
+					universalApk false
+				}
+			}
+		}
+
 ## API Documentation
 
 The libraries javadoc can be found [here](https://rawgit.com/alibaba/AndFix/master/docs/index.html).
