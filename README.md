@@ -175,8 +175,8 @@ Only use `x86` and `armeabi` platform for aviod some device crash. You can add t
 			...
 			splits {
 				abi {
-				enable true
-				reset()
+					enable true
+					reset()
 					include 'x86', 'armeabi'
 					universalApk false
 				}
